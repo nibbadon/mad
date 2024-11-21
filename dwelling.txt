@@ -1,0 +1,104 @@
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import kotlin.math.PI
+ 
+// Base class: Dwelling
+open class Dwelling(val resident: Int) {
+    open val buildingMaterial: String = "Generic Material"
+    open val capacity: Int = 0
+ 
+    fun hasRoom(): Boolean {
+        return resident < capacity
+    }
+ 
+    open fun description(): String {
+        return "This dwelling is made of $buildingMaterial and has space for $capacity residents."
+    }
+}
+ 
+// RoundHut subclass
+class RoundHut(resident: Int) : Dwelling(resident) {
+    override val buildingMaterial: String = "Straw"
+    override val capacity: Int = 4
+ 
+    fun floorArea(radius: Double): Double {
+        return PI * radius * radius
+    }
+ 
+    override fun description(): String {
+        return "This round hut is made of $buildingMaterial and has space for $capacity residents."
+    }
+}
+ 
+// SquareCabin subclass
+class SquareCabin(resident: Int) : Dwelling(resident) {
+    override val buildingMaterial: String = "Wood"
+    override val capacity: Int = 6
+ 
+    fun floorArea(length: Double): Double {
+        return length * length
+    }
+ 
+    override fun description(): String {
+        return "This square cabin is made of $buildingMaterial and has space for $capacity residents."
+    }
+}
+ 
+// RoundTower subclass
+class RoundTower(resident: Int, val floors: Int) : Dwelling(resident) {
+    override val buildingMaterial: String = "Wood"
+    override val capacity: Int = 4 * floors
+ 
+    fun floorArea(radius: Double): Double {
+        return PI * radius * radius * floors
+    }
+ 
+    override fun description(): String {
+        return "This round tower is made of $buildingMaterial and has space for $capacity residents."
+    }
+}
+ 
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            DwellingApp()
+        }
+    }
+}
+ 
+@Composable
+fun DwellingApp() {
+    val hut = RoundHut(3)
+    val cabin = SquareCabin(5)
+    val tower = RoundTower(4, 3)
+ 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(text = hut.description())
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Floor Area: ${hut.floorArea(4.5)}")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = cabin.description())
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Floor Area: ${cabin.floorArea(4.5)}")
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = tower.description())
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(text = "Floor Area: ${tower.floorArea(4.5)}")
+    }
+}
